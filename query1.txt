@@ -1,0 +1,42 @@
+set linesize 400
+set pagesize 50
+TTITLE ON
+
+cl scr
+
+ACCEPT v_accept CHAR FORMAT 'A10' PROMPT 'Check Candidate hired [Accepted] / [Rejected] : '
+
+TTITLE LEFT  'Candidate Hire Report'  -> '&v_accept' SKIP 1 -
+LEFT ============================== SKIP 1 -
+LEFT 'Page No: ' FORMAT 999 SQL.PNO SKIP 2
+
+
+column candidate_id format A12
+column candidate_name format A25
+column interview_date_time format A25
+column manager_name format A25
+column manager_position format A45
+
+select 
+c.candidate_id,
+c.candidate_name,
+i.interview_date_time  as Interview_Date_Time,
+m.manager_name,
+m.manager_position
+from
+interview i,
+job_candidates c,
+manager m
+where
+c.candidate_id = i.candidate_id AND
+i.manager_id = m.manager_id AND
+Accept = '&v_accept'
+Order by
+c.candidate_id,m.manager_name
+;
+
+CLEAR COLUMNS
+CLEAR BREAKS
+CLEAR COMPUTES
+TTITLE OFF
+

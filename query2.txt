@@ -1,0 +1,61 @@
+--View candidates_report by job type and salary
+
+cl scr
+set linesize 350
+set pagesize 50
+TTITLE OFF
+
+column job_type_REQ format A40
+
+select 
+job_type_REQ as Job_Type_Requested,
+count(cand_report_id) as Num_of_Candidates
+from candidates_report
+group by
+job_type_REQ
+Having
+count(cand_report_id) > 14
+order by 
+Num_of_Candidates
+;
+
+ACCEPT v_job_type_REQ CHAR FORMAT 'A40' PROMPT 'Enter Job type Requested : '
+ACCEPT v_salary_range CHAR FORMAT 'A15' PROMPT 'Order by [Min_Salary]/[Max_Salary] :'
+
+column resume_id format A12
+column candidate_name format A30
+column min_salary format 9999.99
+column max_salary format 9999.99
+column job_history_desc format A20
+
+cl scr
+TTITLE ON
+TTITLE LEFT  'Job Type Requested Report'  -> '&v_job_type_REQ' SKIP 1 -
+LEFT ============================================ SKIP 1 -
+LEFT 'Page No: ' FORMAT 999 SQL.PNO SKIP 2
+
+
+select distinct
+cr.resume_id,
+jc.candidate_name,
+r.job_history_desc,
+r.min_salary,
+r.max_salary
+from
+resume r,
+candidates_report cr,
+job_candidates jc
+where
+cr.resume_id = r.resume_id AND
+r.resume_id = jc.resume_id AND
+cr.job_type_REQ ='&v_job_type_REQ'
+Order by
+&v_salary_range
+;
+
+CLEAR COLUMNS
+CLEAR BREAKS
+CLEAR COMPUTES
+TTITLE OFF
+
+

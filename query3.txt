@@ -1,0 +1,59 @@
+cl scr
+set linesize 350
+set pagesize 30
+TTITLE OFF
+
+column candidate_name format A25
+column job_name format A40
+column job_position format A30
+column job_category_type format A25
+
+select
+j.job_position,
+count(c.candidate_name) as Num_Of_Candidiates
+from
+job_candidates c,
+interview i,
+job j,
+job_category jc
+where
+c.candidate_id = i.candidate_id AND
+i.job_id = j.job_id AND
+j.job_category_id = jc.job_category_id
+Group by
+j.job_position
+order by
+Num_Of_Candidiates
+;
+
+ACCEPT v_job_position CHAR FORMAT 'A30' PROMPT 'Enter Job Position : '
+
+cl scr
+
+TTITLE ON
+TTITLE LEFT  'Candidiates Jobs Report'  -> '&v_job_position' SKIP 1 -
+LEFT ============================== SKIP 1 -
+LEFT 'Page No: ' FORMAT 999 SQL.PNO SKIP 2
+
+select
+c.candidate_name,
+j.job_name,
+jc.job_category_type
+from
+job_candidates c,
+interview i,
+job j,
+job_category jc
+where
+c.candidate_id = i.candidate_id AND
+i.job_id = j.job_id AND
+j.job_category_id = jc.job_category_id AND
+j.job_position = '&v_job_position'
+Order by
+jc.job_category_type, j.job_name
+;
+
+CLEAR COLUMNS
+CLEAR BREAKS
+CLEAR COMPUTES
+TTITLE OFF
